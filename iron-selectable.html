@@ -200,6 +200,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.selected = this._indexToValue(index);
     },
 
+    get _shouldUpdateSelection() {
+      return this.selected != null;
+    },
+
     _addListener: function(eventName) {
       this.listen(this, eventName, '_activateHandler');
     },
@@ -289,10 +293,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         this._updateItems();
 
-        if (this.selected != null) {
+        if (this._shouldUpdateSelection) {
           this._updateSelected();
         }
-      }.bind(this));
+      });
     },
 
     _activateHandler: function(e) {
