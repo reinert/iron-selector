@@ -131,23 +131,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.equal(selectedEventCounter, 1);
       });
 
-      test('fire iron-item-select on selected item when selected changes', function() {
+      test('fire iron-item-select/deselect on items when selected changes', function() {
         // setup listener for iron-item-select event
-        var selectedItem = s2.querySelector('#item4'), 
-            oldItem = s2.selectedItem
-            firedEvent = null;
-
+        var selectedEventCounter = 0, 
+            deselectedEventCounter = 0, 
+            selectedItem = s2.querySelector('#item4'), 
+            deselectedItem = s2.selectedItem;
         selectedItem.addEventListener('iron-item-select', function(e) {
-          firedEvent = e;
+          selectedEventCounter++;
+        });
+        deselectedItem.addEventListener('iron-item-deselect', function(e) {
+          deselectedEventCounter++;
         });
 
         // set selected
         s2.selected = 'item4';
 
-        // check iron-item-select event
-        assert(firedEvent);
-        assert.equal(selectedItem, firedEvent.detail.toItem);
-        assert.equal(oldItem, firedEvent.detail.fromItem);
+        // check iron-item-select/deselect events
+        assert.equal(selectedEventCounter, 1);
+        assert.equal(deselectedEventCounter, 1);
       });
 
       test('set selected to old value', function() {

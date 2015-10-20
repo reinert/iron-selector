@@ -130,6 +130,54 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.equal(deselectEventCounter, 1);
       });
 
+      test('fire iron-item-select/deselect on items', function() {
+        // setup listener for iron-item-select/deselect events
+        var item0 = s.children[0], selectEventCounter0 = 0, deselectEventCounter0 = 0,
+            item1 = s.children[1], selectEventCounter1 = 0, deselectEventCounter1 = 0,
+            item2 = s.children[2], selectEventCounter2 = 0, deselectEventCounter2 = 0;
+
+        item0.addEventListener('iron-item-select', function(e) {
+          selectEventCounter0++;
+        });
+        item0.addEventListener('iron-item-deselect', function(e) {
+          deselectEventCounter0++;
+        });
+
+        item1.addEventListener('iron-item-select', function(e) {
+          selectEventCounter1++;
+        });
+        item1.addEventListener('iron-item-deselect', function(e) {
+          deselectEventCounter1++;
+        });
+
+        item2.addEventListener('iron-item-select', function(e) {
+          selectEventCounter2++;
+        });
+        item2.addEventListener('iron-item-deselect', function(e) {
+          deselectEventCounter2++;
+        });
+
+        // tap to select items 0 and 1
+        s.children[0].dispatchEvent(new CustomEvent('tap', {bubbles: true}));
+        s.children[1].dispatchEvent(new CustomEvent('tap', {bubbles: true}));
+        // tap again to deselect items 0 and 1
+        s.children[0].dispatchEvent(new CustomEvent('tap', {bubbles: true}));
+        s.children[1].dispatchEvent(new CustomEvent('tap', {bubbles: true}));
+        // programatically change select values 1 and 2 (only 2 fires iron-item-select)
+        s.selectedValues = [1, 2];
+        // tap to deselect items 1 and 2
+        s.children[1].dispatchEvent(new CustomEvent('tap', {bubbles: true}));
+        s.children[2].dispatchEvent(new CustomEvent('tap', {bubbles: true}));
+
+        // check events
+        assert.equal(selectEventCounter0, 1);
+        assert.equal(deselectEventCounter0, 1);
+        assert.equal(selectEventCounter1, 2);
+        assert.equal(deselectEventCounter1, 2);
+        assert.equal(selectEventCounter2, 1);
+        assert.equal(deselectEventCounter2, 1);
+      });
+
       test('fires selected-values-changed when selection changes', function() {
         var selectedValuesChangedEventCounter = 0;
 

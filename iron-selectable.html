@@ -341,21 +341,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     _fireItemSelect: function(selectedItem, old) {
-      var detail = {fromItem: old, toItem: selectedItem};
-
       if (selectedItem) {
         selectedItem.dispatchEvent(new CustomEvent('iron-item-select', {
           bubbles: false,
-          cancelable: false,
-          detail: detail
+          cancelable: false
         }));
       }
 
       if (old) {
         old.dispatchEvent(new CustomEvent('iron-item-deselect', {
           bubbles: false,
-          cancelable: false,
-          detail: detail
+          cancelable: false
         }));
       }
     }

@@ -118,27 +118,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     _fireItemsSelect: function(selectedItems, old) {
-      var detail = {fromItems: old, toItems: selectedItems, multi: true};
-
-      console.log('_fireItemsSelect');
-
       if (selectedItems) {
-        for (var i = 0; i < selectedItems.length; i++) {
-          selectedItems[i].dispatchEvent(new CustomEvent('iron-item-select', {
-            bubbles: false,
-            cancelable: false,
-            detail: detail
-          }));
-        }
-      }
-
-      if (old) {
-        for (var i = 0; i < old.length; i++) {
-          old[i].dispatchEvent(new CustomEvent('iron-item-deselect', {
-            bubbles: false,
-            cancelable: false,
-            detail: detail
-          }));
+        if (old) {
+          // fire iron-item-select event on new selected items
+          selectedItems.filter(function(item) {
+            if (old.indexOf(item) == -1) {
+              item.dispatchEvent(new CustomEvent('iron-item-select', {
+                bubbles: false,
+                cancelable: false
+              }));
+            }
+          });
+          // fire iron-item-deselect event on just deselected items
+          old.filter(function(item) {
+            if (selectedItems.indexOf(item) == -1) {
+              item.dispatchEvent(new CustomEvent('iron-item-deselect', {
+                bubbles: false,
+                cancelable: false
+              }));
+            }
+          });
+        } else {
+          // all selected items are new
+          selectedItems.forEach(function(item) {
+            item.dispatchEvent(new CustomEvent('iron-item-select', {
+              bubbles: false,
+              cancelable: false
+            }));
+          });
         }
       }
     }
