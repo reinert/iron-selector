@@ -70,7 +70,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       selectedItem: {
         type: Object,
         readOnly: true,
-        notify: true
+        notify: true,
+        observer: '_selectedItemChanged'
       },
 
       /**
@@ -110,6 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * The set of excluded elements where the key is the `localName`
        * of the element that will be ignored from the item list.
        *
+       * @type {object}
        * @default {template: 1}
        */
       _excludedLocalNames: {
@@ -225,6 +227,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this._addListener(eventName);
     },
 
+    _selectedItemChanged: function(selectedItem, old) {
+      this._fireItemSelect(selectedItem, old);
+    },
+
     _updateSelected: function() {
       this._selectSelected(this.selected);
     },
@@ -332,8 +338,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           {selected: value, item: item}, {cancelable: true}).defaultPrevented) {
         this.select(value);
       }
-    }
+    },
 
+    _fireItemSelect: function(selectedItem, old) {
+      var detail = {fromItem: old, toItem: selectedItem};
+
+      if (selectedItem) {
+        selectedItem.dispatchEvent(new CustomEvent('iron-item-select', {
+          bubbles: false,
+          cancelable: false,
+          detail: detail
+        }));
+      }
+
+      if (old) {
+        old.dispatchEvent(new CustomEvent('iron-item-deselect', {
+          bubbles: false,
+          cancelable: false,
+          detail: detail
+        }));
+      }
+    }
   };
 
 </script>

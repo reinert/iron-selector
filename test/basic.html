@@ -131,6 +131,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.equal(selectedEventCounter, 1);
       });
 
+      test('fire iron-item-select on selected item when selected changes', function() {
+        // setup listener for iron-item-select event
+        var selectedItem = s2.querySelector('#item4'), 
+            oldItem = s2.selectedItem
+            firedEvent = null;
+
+        selectedItem.addEventListener('iron-item-select', function(e) {
+          firedEvent = e;
+        });
+
+        // set selected
+        s2.selected = 'item4';
+
+        // check iron-item-select event
+        assert(firedEvent);
+        assert.equal(selectedItem, firedEvent.detail.toItem);
+        assert.equal(oldItem, firedEvent.detail.fromItem);
+      });
+
       test('set selected to old value', function() {
         // setup listener for iron-select event
         var selectedEventCounter = 0;
