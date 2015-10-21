@@ -40,8 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       selectedItems: {
         type: Array,
         readOnly: true,
-        notify: true,
-        observer: '_selectedItemsChanged'
+        notify: true
       },
 
     },
@@ -73,12 +72,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this._selection.multi = multi;
     },
 
-    _selectedItemsChanged: function(selectedItems, old) {
-      if (this.multi) {
-        this._fireItemsSelect(selectedItems, old);
-      }
-    },
-
     _updateSelected: function() {
       if (this.multi) {
         this._selectMulti(this.selectedValues);
@@ -88,11 +81,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     _selectMulti: function(values) {
-      this._selection.clear();
       if (values) {
-        for (var i = 0; i < values.length; i++) {
-          this._selection.setItemSelected(this._valueToItem(values[i]), true);
+        var selectedItems = this._valuesToItems(values);
+        // clear all but the current selected items
+        this._selection.clear(selectedItems);
+        // select only those not selected yet
+        for (var i = 0; i < selectedItems.length; i++) {
+          if (!this._selection.isSelected(selectedItems[i])) {
+            this._selection.setItemSelected(selectedItems[i], true);
+          }
         }
+      } else {
+        this._selection.clear();
       }
     },
 
@@ -117,37 +117,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this._selection.setItemSelected(this._valueToItem(value), unselected);
     },
 
-    _fireItemsSelect: function(selectedItems, old) {
-      if (selectedItems) {
-        if (old) {
-          // fire iron-item-select event on new selected items
-          selectedItems.filter(function(item) {
-            if (old.indexOf(item) == -1) {
-              item.dispatchEvent(new CustomEvent('iron-item-select', {
-                bubbles: false,
-                cancelable: false
-              }));
-            }
-          });
-          // fire iron-item-deselect event on just deselected items
-          old.filter(function(item) {
-            if (selectedItems.indexOf(item) == -1) {
-              item.dispatchEvent(new CustomEvent('iron-item-deselect', {
-                bubbles: false,
-                cancelable: false
-              }));
-            }
-          });
-        } else {
-          // all selected items are new
-          selectedItems.forEach(function(item) {
-            item.dispatchEvent(new CustomEvent('iron-item-select', {
-              bubbles: false,
-              cancelable: false
-            }));
-          });
-        }
-      }
+    _valuesToItems: function(values) {
+      return (values == null) ? null : values.map(function(value) {
+        return this._valueToItem(value);
+      }, this);
     }
   };
 

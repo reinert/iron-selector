@@ -70,8 +70,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       selectedItem: {
         type: Object,
         readOnly: true,
-        notify: true,
-        observer: '_selectedItemChanged'
+        notify: true
+        // observer: '_selectedItemChanged'
       },
 
       /**
@@ -227,9 +227,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this._addListener(eventName);
     },
 
-    _selectedItemChanged: function(selectedItem, old) {
-      this._fireItemSelect(selectedItem, old);
-    },
+    // _selectedItemChanged: function(selectedItem, old) {
+    //   this._fireItemSelect(selectedItem, old);
+    // },
 
     _updateSelected: function() {
       this._selectSelected(this.selected);
@@ -282,7 +282,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.toggleAttribute(this.selectedAttribute, isSelected, item);
       }
       this._selectionChange();
-      this.fire('iron-' + (isSelected ? 'select' : 'deselect'), {item: item});
+      var eventSuffix = isSelected ? 'select' : 'deselect';
+      // fire iron-select/deselect on iron-selectable element
+      this.fire('iron-' + eventSuffix, {item: item});
+      // fire iron-item-select/deslect on item
+      item.dispatchEvent(new CustomEvent('iron-item-' + eventSuffix, {
+        bubbles: false,
+        cancelable: false
+      }));
     },
 
     _selectionChange: function() {
@@ -338,23 +345,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           {selected: value, item: item}, {cancelable: true}).defaultPrevented) {
         this.select(value);
       }
-    },
-
-    _fireItemSelect: function(selectedItem, old) {
-      if (selectedItem) {
-        selectedItem.dispatchEvent(new CustomEvent('iron-item-select', {
-          bubbles: false,
-          cancelable: false
-        }));
-      }
-
-      if (old) {
-        old.dispatchEvent(new CustomEvent('iron-item-deselect', {
-          bubbles: false,
-          cancelable: false
-        }));
-      }
     }
+
+    // _fireItemSelect: function(selectedItem, old) {
+    //   if (selectedItem) {
+    //     selectedItem.dispatchEvent(new CustomEvent('iron-item-select', {
+    //       bubbles: false,
+    //       cancelable: false
+    //     }));
+    //   }
+
+    //   if (old) {
+    //     old.dispatchEvent(new CustomEvent('iron-item-deselect', {
+    //       bubbles: false,
+    //       cancelable: false
+    //     }));
+    //   }
+    // }
   };
 
 </script>
