@@ -86,10 +86,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // clear all but the current selected items
         this._selection.clear(selectedItems);
         // select only those not selected yet
+        console.log('SELECT MULTI');
+        console.log(values);
         for (var i = 0; i < selectedItems.length; i++) {
-          if (!this._selection.isSelected(selectedItems[i])) {
-            this._selection.setItemSelected(selectedItems[i], true);
-          }
+          this._selection.setItemSelected(selectedItems[i], true);
         }
       } else {
         this._selection.clear();
